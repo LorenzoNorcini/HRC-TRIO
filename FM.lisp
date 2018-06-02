@@ -205,30 +205,19 @@
   	)
 )
 
-(defvar still_iff_operator_adjacent_or_working
+(defvar still_if_operator_adjacent_or_working
   (Alw
-  	(<-> (-P- robot_still)
+  	(<- (-P- robot_still)
 	   (eval
 		  	(append `(||)
   				(loop for i upto (- (list-length pos) 1)
   					append (loop for j upto (- (list-length pos) 1)
   				  		when (not(eq (nth j(2d-array-to-list (array-slice adjacency i))) 0))
       						collect 
-      							`(||
-	      							(&& 
-	      								(-P- , (get_variable_name "robot_in_pos_~A" i))
-										(-P- , (get_variable_name "operator_in_~A" (nth j pos)))
-									)
-	      							(&&
-	      								(-P- direction_to_ws)
-										(-P- robot_in_pos_15)
-	      							)
-	      							(&&
-	      								(-P- direction_to_bin)
-										(-P- robot_in_pos_9)
-	      							)
-	      							(-P- no_direction)
-      							)
+      							`(&& 
+      								(-P- , (get_variable_name "robot_in_pos_~A" i))
+									(-P- , (get_variable_name "operator_in_~A" (nth j pos)))
+								)
 							)	
 						)	
 					)
@@ -237,7 +226,7 @@
 	)
 )
 
-(defvar when_arrived_work
+(defvar when_arrived_in_ws_work
 	(Alw
 		(<->
 			(&&
@@ -245,7 +234,75 @@
 				(-P- robot_in_pos_15)
 			)
 			(&&
-				(Futr(Lasts(-P- working) 3) 1)
+				(Lasts_ei(-P- working) 6)
+			)
+		)
+	)
+)
+
+(defvar working_procedure
+	(Alw
+		(&&
+			(<->
+				(&&
+					(!!(Past(-P- working) 1))
+					(-P- working)
+				)
+				(-P- started_working)
+			)
+			(<->
+				(&&
+					(Past(-P- working) 1)
+					(!!(Past(-P- working) 2))
+					(-P- working)
+				)
+				(-P- picked_piece_from_local_bin)
+			)
+			(<->
+				(&&
+					(Past(-P- working) 2)
+					(!!(Past(-P- working) 3))
+					(-P- working)
+				)
+				(-P- extended_arm_in_ws)
+			)
+			(<->
+				(&&
+					(Past(-P- working) 3)
+					(!!(Past(-P- working) 4))
+					(-P- working)
+				)
+				(-P- piece_elaborated)
+			)
+			(<->
+				(&&
+					(Past(-P- working) 4)
+					(!!(Past(-P- working) 5))
+					(-P- working)
+				)
+				(-P- arm_retracted_from_ws)
+			)
+			(<->
+				(&&
+					(Past(-P- working) 5)
+					(!!(Past(-P- working) 6))
+					(-P- working)
+				)
+				(-P- finished_working)
+			)
+		)
+	)
+)
+
+(defvar when_arrived_in_bin_load
+	(Alw
+		(<->
+			(&&
+				(-P- direction_to_bin)
+				(-P- robot_in_pos_9)
+			)
+			(&&
+				(Lasts_ei(-P- loading) 6)
 			)
 		)
 	)
@@ -273,20 +330,6 @@
 	)
 )
 
-(defvar when_arrived_load
-	(Alw
-		(<->
-			(&&
-				(-P- direction_to_bin)
-				(-P- robot_in_pos_9)
-			)
-			(&&
-				(Futr(Lasts(-P- loading) 3) 1)
-			)
-		)
-	)
-)
-
 (defvar no_direction_while_operating
 	(Alw
 		(<->
@@ -302,48 +345,114 @@
 (defvar direction_change
 	(Alw
 		(&&
-			(<->
+			(->
 				(&&
 					(Past(-P- working) 1)
 					(!!(-P- working))
 				)
-				(-P- direction_to_bin)
+				(&&
+					(until_ii (-P- direction_to_bin) (-P- robot_in_pos_9))
+					(SomF (-P- robot_in_pos_9))
+				)
 			)
-			(<->
+			(->
 				(&&
 					(Past(-P- loading) 1)
 					(!!(-P- loading))
 				)
-				(-P- direction_to_ws)
+				(&&
+					(until_ii (-P- direction_to_ws) (-P- robot_in_pos_15))
+					(SomF (-P- robot_in_pos_15))
+				)
+			)
+		)
+	)
+)
+
+(defvar loading_procedure
+	(Alw
+		(&&
+			(<->
+				(&&
+					(!!(Past(-P- loading) 1))
+					(-P- loading)
+				)
+				(-P- started_loading)
+			)
+			(<->
+				(&&
+					(Past(-P- loading) 1)
+					(!!(Past(-P- loading) 2))
+					(-P- loading)
+				)
+				(-P- arm_extended_in_global_bin)
+			)
+			(<->
+				(&&
+					(Past(-P- loading) 2)
+					(!!(Past(-P- loading) 3))
+					(-P- loading)
+				)
+				(-P- picked_piece_from_global_bin)
+			)
+			(<->
+				(&&
+					(Past(-P- loading) 3)
+					(!!(Past(-P- loading) 4))
+					(-P- loading)
+				)
+				(-P- arm_retracted_from_global_bin)
+			)
+			(<->
+				(&&
+					(Past(-P- loading) 4)
+					(!!(Past(-P- loading) 5))
+					(-P- loading)
+				)
+				(-P- placed_piece_in_local_bin)
+			)
+			(<->
+				(&&
+					(Past(-P- loading) 5)
+					(!!(Past(-P- loading) 6))
+					(-P- loading)
+				)
+				(-P- finished_loading)
 			)
 		)
 	)
 )
 
 
-
-(ae2sbvzot:zot 10
+(ae2sbvzot:zot 50
 		(yesterday(&&
+
 					at_least_one_robot_position
+					at_least_one_operator_position
+
 					one_robot_postion_at_a_time
 					one_operator_postion_at_a_time
-					at_least_one_operator_position
-					operator_movement
+					
 					robot_movement_moving
 					robot_movement_still
-					still_iff_operator_adjacent_or_working
-					no_op_robot_same_tile
 					robot_has_moving_state
+					operator_movement
+
+					still_if_operator_adjacent_or_working
+					no_op_robot_same_tile
+
 					robot_has_direction
-					when_arrived_work
-					when_arrived_load
 					no_direction_while_operating
 					direction_change
+
 					load_only_in_assigned_zone
 					work_only_in_assigned_zone
-					(-P- loading)
-					(Futr (-P- direction_to_ws) 1)
-					(Futr (-P- robot_in_pos_9) 1)
-					(-P- operator_in_pos_8)
+					when_arrived_in_ws_work
+					when_arrived_in_bin_load
+					working_procedure
+					loading_procedure
+
+					(-P- robot_in_pos_15)
+					(-P- direction_to_ws)
 				))
 )
