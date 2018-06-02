@@ -220,8 +220,14 @@
 										(-P- , (get_variable_name "operator_in_~A" (nth j pos)))
 									)
 	      							(&&
-	      								(-P- no_direction)
+	      								(-P- direction_to_ws)
+										(-P- robot_in_pos_15)
 	      							)
+	      							(&&
+	      								(-P- direction_to_bin)
+										(-P- robot_in_pos_9)
+	      							)
+	      							(-P- no_direction)
       							)
 							)	
 						)	
@@ -231,7 +237,57 @@
 	)
 )
 
-(defvar no_direction_in_zones
+(defvar when_arrived_work
+	(Alw
+		(<->
+			(&&
+				(-P- direction_to_ws)
+				(-P- robot_in_pos_15)
+			)
+			(&&
+				(Futr(Lasts(-P- working) 3) 1)
+			)
+		)
+	)
+)
+
+(defvar work_only_in_assigned_zone
+	(Alw
+		(->
+			(-P- working)
+			(&&
+				(-P- robot_in_pos_15)
+			)
+		)
+	)
+)
+
+(defvar load_only_in_assigned_zone
+	(Alw
+		(->
+			(-P- loading)
+			(&&
+				(-P- robot_in_pos_9)
+			)
+		)
+	)
+)
+
+(defvar when_arrived_load
+	(Alw
+		(<->
+			(&&
+				(-P- direction_to_bin)
+				(-P- robot_in_pos_9)
+			)
+			(&&
+				(Futr(Lasts(-P- loading) 3) 1)
+			)
+		)
+	)
+)
+
+(defvar no_direction_while_operating
 	(Alw
 		(<->
 			(-P- no_direction)
@@ -243,16 +299,27 @@
 	)
 )
 
-; (defvar 
-; 	(Alw
-; 		(<->
-; 			(-P- working)
-; 			(&&
-				
-; 			)
-; 		)
-; 	)
-; )
+(defvar direction_change
+	(Alw
+		(&&
+			(<->
+				(&&
+					(Past(-P- working) 1)
+					(!!(-P- working))
+				)
+				(-P- direction_to_bin)
+			)
+			(<->
+				(&&
+					(Past(-P- loading) 1)
+					(!!(-P- loading))
+				)
+				(-P- direction_to_ws)
+			)
+		)
+	)
+)
+
 
 
 (ae2sbvzot:zot 10
@@ -268,8 +335,15 @@
 					no_op_robot_same_tile
 					robot_has_moving_state
 					robot_has_direction
-					(-P- direction_to_ws)
-					(-P- robot_in_pos_15)
-					(-P- operator_in_pos_24)
+					when_arrived_work
+					when_arrived_load
+					no_direction_while_operating
+					direction_change
+					load_only_in_assigned_zone
+					work_only_in_assigned_zone
+					(-P- loading)
+					(Futr (-P- direction_to_ws) 1)
+					(Futr (-P- robot_in_pos_9) 1)
+					(-P- operator_in_pos_8)
 				))
 )
