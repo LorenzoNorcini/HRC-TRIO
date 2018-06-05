@@ -8,13 +8,17 @@
 ;
 ;	0,	1,	2,	3,	4
 ;	5,	6,	7,	8,	9
-;	10,	11,	12,	13, 14
-;	15,	16, 17, 18, 19
+;	10,	11,	12,	13, 	14
+;	15,	16, 	17, 	18, 	19
 ;	20,	21,	22,	23,	24
 ;
 
-(defvar pos `(pos_0 pos_1 pos_2 pos_3 pos_4 pos_5 pos_6 pos_7 pos_8 pos_9 pos_10 pos_11 pos_12 pos_13 pos_14 pos_15 pos_16 pos_17 pos_18 pos_19 pos_20 pos_21 pos_22 pos_23 pos_24))
-
+(defvar pos `(pos_0    pos_1    pos_2    pos_3    pos_4
+	      pos_5    pos_6    pos_7    pos_8    pos_9 
+	      pos_10   pos_11   pos_12   pos_13   pos_14 
+	      pos_15   pos_16   pos_17   pos_18   pos_19
+	      pos_20   pos_21   pos_22   pos_23   pos_24)
+)
 
 ; The adjacency matrix of our 5x5 grid.
 ; Such matrix is used as a definition for the concept adjacency,
@@ -116,9 +120,9 @@
   					append (loop for loc2 in pos
           				when (not(eq loc1 loc2))
           					collect 
-         						`(-> (-P- , (get_variable_name "robot_in_~A" loc1))
-									(!!
-										(-P- ,(get_variable_name "robot_in_~A" loc2))
+						`(-> (-P- , (get_variable_name "robot_in_~A" loc1))
+								(!!
+									(-P- ,(get_variable_name "robot_in_~A" loc2))
 							)
 						)
 					)
@@ -165,8 +169,8 @@
   				  		when (not(eq (nth j(2d-array-to-list (array-slice adjacency i))) 0))
       						collect 
      						`(&& (-P- , (get_variable_name "robot_in_pos_~A" i))
-											(Futr
-												(-P- ,(get_variable_name "robot_in_~A" (nth j pos))) 1
+							(Futr
+								(-P- ,(get_variable_name "robot_in_~A" (nth j pos))) 1
 							)
 						)
 					)
@@ -185,10 +189,10 @@
 			(append `(||)
 				(loop for loc in pos collect
      					` (&& (-P- , (get_variable_name "robot_in_~A" loc))
-											(Futr
-												(-P- ,(get_variable_name "robot_in_~A" loc)) 1
-											)
-							)
+						(Futr
+							(-P- ,(get_variable_name "robot_in_~A" loc)) 1
+						)
+					)
 				)
 			)
 		)
@@ -223,8 +227,8 @@
           				when (not(eq loc1 loc2))
           					collect 
          						`(-> (-P- , (get_variable_name "operator_in_~A" loc1))
-									(!!
-										(-P- , (get_variable_name "operator_in_~A" loc2))
+								(!!
+									(-P- , (get_variable_name "operator_in_~A" loc2))
 							)
 						)
 					)
@@ -246,11 +250,11 @@
   				  		when (not(eq (nth j (2d-array-to-list (array-slice adjacency i))) 0))
       						collect 
      							`(&& (-P- , (get_variable_name "operator_in_pos_~A" i))
-									(Futr
-										(||
-											(-P- ,(get_variable_name "operator_in_~A" (nth j pos)))
-											(-P- ,(get_variable_name "operator_in_pos_~A" i))
-										) 1
+							(Futr
+								(||
+									(-P- ,(get_variable_name "operator_in_~A" (nth j pos)))
+									(-P- ,(get_variable_name "operator_in_pos_~A" i))
+								) 1
 
 							)
 						)
@@ -291,15 +295,15 @@
   					append (loop for j upto (- (list-length pos) 1)
   				  		when (not(eq (nth j(2d-array-to-list (array-slice adjacency i))) 0))
       						collect 
-      							`(&& 
-      								(-P- , (get_variable_name "robot_in_pos_~A" i))
-									(-P- , (get_variable_name "operator_in_~A" (nth j pos)))
-								)
-							)	
+						`(&& 
+							(-P- , (get_variable_name "robot_in_pos_~A" i))
+								(-P- , (get_variable_name "operator_in_~A" (nth j pos)))
+							)
 						)	
-					)
+					)	
+				)
 			)	
-	   )
+	   	)
 	)
 )
 
