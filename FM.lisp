@@ -288,16 +288,28 @@
 
 (defvar still_if_operator_adjacent_or_working
   (Alw
-  	(<- (-P- robot_still)
+  	(<-> (-P- robot_still)
 	   (eval
 		  	(append `(||)
   				(loop for i upto (- (list-length pos) 1)
   					append (loop for j upto (- (list-length pos) 1)
   				  		when (not(eq (nth j(2d-array-to-list (array-slice adjacency i))) 0))
       						collect 
-						`(&& 
-							(-P- , (get_variable_name "robot_in_pos_~A" i))
-								(-P- , (get_variable_name "operator_in_~A" (nth j pos)))
+							`(||
+								(&& 
+									(-P- , (get_variable_name "robot_in_pos_~A" i))
+									(-P- , (get_variable_name "operator_in_~A" (nth j pos)))
+								)
+								(||
+									(&&
+										(-P- robot_in_pos_15)
+										(-P- direction_to_ws)
+									)
+									(&&
+										(-P- robot_in_pos_9)
+										(-P- direction_to_bin)
+									)
+								)
 							)
 						)	
 					)	
