@@ -1,23 +1,8 @@
-# FM_2018
+# FM 2018
 
 
-### TODO List:
+Repository for the Formal Methods course project:
 
-- Fix movement signal timing (moving slow, fast, still)
+The mandatory part is [here](https://github.com/LorenzoNorcini/FM_2018/blob/master/Formal%20Methods.pdf)
 
-- Finish defining Arm movements (Controller + Robot)
-
-- Formally define Security Policy
-
-- Impose arrival to Destination
-
-- Manage arrival 
-
-- Update and Comment current Map
-
-- Define and describe operator signals during work task
-
-- Model Movement to Idle
-
-
-__ZOT__
+The optional part is [here](https://github.com/LorenzoNorcini/FM_2018/blob/master/FM.lisp)
