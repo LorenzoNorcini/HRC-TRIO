@@ -20,7 +20,7 @@ The robot enviroment is formalized as follows.
 
 ![](https://github.com/LorenzoNorcini/FM_2018/blob/master/Map.png)
 
-The formal description of the system can be found [here](https://github.com/LorenzoNorcini/FM_2018/blob/master/Formal%20Methods.pdf)
+The formal description of the system is done using [TRIO](http://risorse.dei.polimi.it/TRIO/) formal language and can be found [here](https://github.com/LorenzoNorcini/FM_2018/blob/master/Formal%20Methods.pdf)
 
 A simplified version of the model has been verified using [Zot model checker](https://arxiv.org/abs/0912.5014)
 
