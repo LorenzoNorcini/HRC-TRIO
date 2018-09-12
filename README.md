@@ -24,7 +24,7 @@ The formal description of the system is done using [TRIO](http://risorse.dei.pol
 
 A simplified version of the model has been verified using [Zot model checker](https://arxiv.org/abs/0912.5014)
 
-In order to run the script, Docker must be installed
+In order to run the script Docker must be installed
 ```bash
 ./run.sh zot FM.lisp
 ```
